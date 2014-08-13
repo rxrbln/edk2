@@ -2223,6 +2223,7 @@ AhciModeInitialization (
   EFI_PCI_IO_PROTOCOL              *PciIo;
   EFI_IDE_CONTROLLER_INIT_PROTOCOL *IdeInit;
   UINT32                           Capability;
+  BOOLEAN                          ChannelEnabled;
   UINT8                            MaxPortNumber;
   UINT32                           PortImplementBitMap;
 
@@ -2295,6 +2296,21 @@ AhciModeInitialization (
       }
 
       IdeInit->NotifyPhase (IdeInit, EfiIdeBeforeChannelEnumeration, Port);
+
+      Status = IdeInit->GetChannelInfo (
+          IdeInit,
+          Port,
+          &ChannelEnabled,
+          &MaxPortNumber
+          );
+      if (EFI_ERROR (Status)) {
+        DEBUG ((EFI_D_ERROR, "[GetChannel, Status=%x]", Status));
+        continue;
+      }
+
+      if (!ChannelEnabled) {
+        continue;
+      }
 
       //
       // Initialize FIS Base Address Register and Command List Base Address Register for use.
