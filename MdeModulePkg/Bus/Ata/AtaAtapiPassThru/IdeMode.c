@@ -2593,6 +2593,11 @@ DetectAndConfigIdeDevice (
 
   for (IdeDevice = 0; IdeDevice < EfiIdeMaxDevice; IdeDevice++) {
     //
+    // Select Master or Slave device to get the return signature for ATA DEVICE DIAGNOSTIC cmd.
+    //
+    IdeWritePortB (PciIo, IdeRegisters->Head, (UINT8)((IdeDevice << 4) | 0xe0));
+
+    //
     // Send ATA Device Execut Diagnostic command.
     // This command should work no matter DRDY is ready or not
     //
@@ -2604,10 +2609,6 @@ DetectAndConfigIdeDevice (
       continue;
     }
 
-    //
-    // Select Master or Slave device to get the return signature for ATA DEVICE DIAGNOSTIC cmd.
-    //
-    IdeWritePortB (PciIo, IdeRegisters->Head, (UINT8)((IdeDevice << 4) | 0xe0));
     //
     // Stall for 1 milliseconds.
     //
