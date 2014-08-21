@@ -1261,6 +1261,7 @@ Returns:
   BdsLibBuildOptionFromVar (BootOptionList, L"BootOrder");
 
   PlatformBdsEnterFrontPage (GetFrontPageTimeoutFromQemu(), TRUE);
+  BdsBootApple ();
 }
 
 VOID
