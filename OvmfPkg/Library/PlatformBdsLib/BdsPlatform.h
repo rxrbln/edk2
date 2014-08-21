@@ -47,6 +47,7 @@ Abstract:
 #include <Library/DevicePathLib.h>
 #include <Library/IoLib.h>
 #include <Library/NvVarsFileLib.h>
+#include <Library/AppleSupportLib.h>
 
 #include <Protocol/Decompress.h>
 #include <Protocol/PciIo.h>
