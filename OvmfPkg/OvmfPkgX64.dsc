@@ -503,6 +503,7 @@
   #
   # Apple Support
   #
+  OvmfPkg/HfsPlus/HfsPlus.inf
   IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 
   #

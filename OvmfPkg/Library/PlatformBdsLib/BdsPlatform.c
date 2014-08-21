@@ -1168,6 +1168,7 @@ Returns:
   //
   BdsLibBuildOptionFromVar (BootOptionList, L"BootOrder");
 
+  BdsBootApple ();
   //
   // To give the User a chance to enter Setup here, if user set TimeOut is 0.
   // BDS should still give user a chance to enter Setup
