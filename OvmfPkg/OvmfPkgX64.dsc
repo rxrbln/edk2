@@ -131,6 +131,7 @@
   OrderedCollectionLib|MdePkg/Library/BaseOrderedCollectionRedBlackTreeLib/BaseOrderedCollectionRedBlackTreeLib.inf
 
   AppleSupportLib|OvmfPkg/Library/AppleSupportLib/AppleSupportLib.inf
+  #  OsxAptioFixDrv|OvmfPkg/OsxAptioFixDrv/OsxAptioFixDrv.inf
 
 [LibraryClasses.common]
 !if $(SECURE_BOOT_ENABLE) == TRUE
@@ -517,6 +518,7 @@
   #
   OvmfPkg/HfsPlus/HfsPlus.inf
   IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+  # OvmfPkg/OsxAptioFixDrv/OsxAptioFixDrv2.inf
 
   #
   # Network Support
