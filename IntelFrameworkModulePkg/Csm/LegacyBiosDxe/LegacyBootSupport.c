@@ -1,6 +1,6 @@
 /** @file
 
-Copyright (c) 2006 - 2015, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2014, Intel Corporation. All rights reserved.<BR>
 
 This program and the accompanying materials
 are licensed and made available under the terms and conditions
@@ -1253,20 +1253,18 @@ GenericLegacyBoot (
   //
   EnableAllControllers (Private);
   if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode == BOOT_UNCONVENTIONAL_DEVICE)) {
-
     //
-    // Signal all the events that are waiting on EVT_SIGNAL_LEGACY_BOOT
-    //
-    EfiSignalEventLegacyBoot ();
-
-    //
-    // Report Status Code to indicate legacy boot event was signalled
+    // Report Status Code to indicate legacy boot event will be signalled
     //
     REPORT_STATUS_CODE (
       EFI_PROGRESS_CODE,
       (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_LEGACY_BOOT_EVENT)
       );
 
+    //
+    // Signal all the events that are waiting on EVT_SIGNAL_LEGACY_BOOT
+    //
+    EfiSignalEventLegacyBoot ();
     DEBUG ((EFI_D_INFO, "Legacy INT19 Boot...\n"));
 
     //
