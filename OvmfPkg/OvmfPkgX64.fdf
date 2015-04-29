@@ -78,7 +78,7 @@ FV = SECFV
 ################################################################################
 
 [FD.MEMFD]
-BaseAddress   = 0x800000
+BaseAddress   = 0x1000000
 Size          = 0x900000
 ErasePolarity = 1
 BlockSize     = 0x10000
