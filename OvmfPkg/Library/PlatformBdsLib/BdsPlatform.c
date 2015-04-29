@@ -1342,6 +1342,7 @@ Returns:
 
   DEBUG ((EFI_D_INFO, "PlatformBdsBootFail\n"));
 
+  gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
   //
   // If Boot returned with failed status then we need to pop up a UI and wait
   // for user input.
