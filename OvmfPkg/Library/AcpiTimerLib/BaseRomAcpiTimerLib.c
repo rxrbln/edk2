@@ -48,19 +48,28 @@ AcpiTimerLibConstructor (
   UINT16 HostBridgeDevId;
   UINTN Pmba;
   UINTN PmRegMisc;
+  BOOLEAN ConfigurePmba;
 
   //
   // Query Host Bridge DID to determine platform type
   //
+  ConfigurePmba = TRUE;
   HostBridgeDevId = PciRead16 (OVMF_HOSTBRIDGE_DID);
   switch (HostBridgeDevId) {
     case INTEL_82441_DEVICE_ID:
       Pmba      = POWER_MGMT_REGISTER_PIIX4 (0x40);
       PmRegMisc = POWER_MGMT_REGISTER_PIIX4 (0x80);
+      //
+      // Check to see if the Power Management Base Address is already enabled
+      //
+      if ((PciRead8 (PmRegMisc) & 0x01) == 0) {
+        PciOr8 (PmRegMisc, PMIOSE);
+      } else {
+        ConfigurePmba = FALSE;
+      }
       break;
     case INTEL_Q35_MCH_DEVICE_ID:
       Pmba      = POWER_MGMT_REGISTER_Q35 (0x40);
-      PmRegMisc = POWER_MGMT_REGISTER_Q35 (0x80);
       break;
     default:
       DEBUG ((EFI_D_ERROR, "%a: Unknown Host Bridge Device ID: 0x%04x\n",
@@ -72,17 +81,13 @@ AcpiTimerLibConstructor (
   //
   // Check to see if the Power Management Base Address is already enabled
   //
-  if ((PciRead8 (PmRegMisc) & PMIOSE) == 0) {
+  if (ConfigurePmba) {
     //
     // If the Power Management Base Address is not programmed,
     // then program the Power Management Base Address from a PCD.
     //
     PciAndThenOr32 (Pmba, (UINT32) ~0xFFC0, PcdGet16 (PcdAcpiPmBaseAddress));
 
-    //
-    // Enable PMBA I/O port decodes in PMREGMISC
-    //
-    PciOr8 (PmRegMisc, PMIOSE);
   }
 
   return RETURN_SUCCESS;

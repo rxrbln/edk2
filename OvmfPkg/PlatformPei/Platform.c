@@ -233,6 +233,7 @@ MiscInitialization (
   UINTN  PmCmd;
   UINTN  Pmba;
   UINTN  PmRegMisc;
+  BOOLEAN ConfigurePmba;
 
   //
   // Disable A20 Mask
@@ -247,17 +248,28 @@ MiscInitialization (
   //
   // Query Host Bridge DID to determine platform type and save to PCD
   //
+  ConfigurePmba = TRUE;
   HostBridgeDevId = PciRead16 (OVMF_HOSTBRIDGE_DID);
   switch (HostBridgeDevId) {
     case INTEL_82441_DEVICE_ID:
       PmCmd     = POWER_MGMT_REGISTER_PIIX4 (PCI_COMMAND_OFFSET);
       Pmba      = POWER_MGMT_REGISTER_PIIX4 (0x40);
       PmRegMisc = POWER_MGMT_REGISTER_PIIX4 (0x80);
+      //
+      // If PMREGMISC/PMIOSE (only available on piix4, NOT q35) is set,
+      // assume the ACPI PMBA has been configured (for example by Xen)
+      // and skip the setup here. This matches the logic in
+      // AcpiTimerLibConstructor ().
+      //
+      if ((PciRead8 (PmRegMisc) & 0x01) == 0) {
+        PciOr8 (PmRegMisc, 0x01);
+      } else {
+        ConfigurePmba = FALSE;
+      }
       break;
     case INTEL_Q35_MCH_DEVICE_ID:
       PmCmd     = POWER_MGMT_REGISTER_Q35 (PCI_COMMAND_OFFSET);
       Pmba      = POWER_MGMT_REGISTER_Q35 (0x40);
-      PmRegMisc = POWER_MGMT_REGISTER_Q35 (0x80);
       break;
     default:
       DEBUG ((EFI_D_ERROR, "%a: Unknown Host Bridge Device ID: 0x%04x\n",
@@ -267,12 +279,7 @@ MiscInitialization (
   }
   PcdSet16 (PcdOvmfHostBridgePciDevId, HostBridgeDevId);
 
-  //
-  // If PMREGMISC/PMIOSE is set, assume the ACPI PMBA has been configured (for
-  // example by Xen) and skip the setup here. This matches the logic in
-  // AcpiTimerLibConstructor ().
-  //
-  if ((PciRead8 (PmRegMisc) & 0x01) == 0) {
+  if (ConfigurePmba) {
     //
     // The PEI phase should be exited with fully accessibe PIIX4 IO space:
     // 1. set PMBA
@@ -284,10 +291,6 @@ MiscInitialization (
     //
     PciOr8 (PmCmd, EFI_PCI_COMMAND_IO_SPACE);
 
-    //
-    // 3. set PMREGMISC/PMIOSE
-    //
-    PciOr8 (PmRegMisc, 0x01);
   }
 }
 
