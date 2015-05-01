@@ -1151,6 +1151,12 @@ Returns:
   Status = BaseMemoryTest (MemoryTestLevel);
 }
 
+EFI_STATUS
+EFIAPI
+OsxAptioFixDrvEntrypoint (
+   IN EFI_HANDLE               ImageHandle,
+   IN EFI_SYSTEM_TABLE         *SystemTable
+   );
 
 VOID
 EFIAPI
@@ -1196,6 +1202,7 @@ Returns:
   // Initialize AppleSupport library
   //
   InitializeAppleSupport (gImageHandle, gST);
+  OsxAptioFixDrvEntrypoint (gImageHandle, gST);
 
   if (PcdGetBool (PcdOvmfFlashVariablesEnable)) {
     DEBUG ((EFI_D_INFO, "PlatformBdsPolicyBehavior: not restoring NvVars "
