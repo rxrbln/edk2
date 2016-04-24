@@ -523,6 +523,7 @@
   # Apple Support
   #
   OvmfPkg/HfsPlus/HfsPlus.inf
+  OvmfPkg/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
   IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 
   #

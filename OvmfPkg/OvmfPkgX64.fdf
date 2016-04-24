@@ -283,7 +283,7 @@ INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 
 INF  IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 INF  OvmfPkg/HfsPlus/HfsPlus.inf
-
+INF  OvmfPkg/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 INF  RuleOverride = BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 
 !ifndef $(USE_OLD_SHELL)
