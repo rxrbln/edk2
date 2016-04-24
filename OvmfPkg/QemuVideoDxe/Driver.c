@@ -53,6 +53,16 @@ QEMU_VIDEO_CARD gQemuVideoCardList[] = {
         QEMU_VIDEO_BOCHS,
         L"QEMU QXL VGA"
     },{
+        0x1af4,
+        0x1050,
+        QEMU_VIDEO_BOCHS_MMIO,
+        L"QEMU VirtIO VGA"
+    },{
+        0x15ad,
+        0x0405,
+        QEMU_VIDEO_BOCHS_VMSVGA2,
+        L"QEMU VM SVGA2"
+    },{
         0 /* end of list */
     }
 };
@@ -239,8 +249,9 @@ QemuVideoControllerDriverStart (
   // IsQxl is based on the detected Card->Variant, which at a later point might
   // not match Private->Variant.
   //
-  IsQxl = (BOOLEAN)(Card->Variant == QEMU_VIDEO_BOCHS);
-
+  IsQxl = (BOOLEAN)(Card->Variant == QEMU_VIDEO_BOCHS_QXL);
+  DEBUG ((EFI_D_INFO, "QemuVideo: IsQxl: %d\n", IsQxl));
+  
   //
   // Save original PCI attributes
   //
@@ -297,8 +308,10 @@ QemuVideoControllerDriverStart (
   //
   // Check if accessing the bochs interface works.
   //
-  if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO ||
-      Private->Variant == QEMU_VIDEO_BOCHS) {
+  if (Private->Variant == QEMU_VIDEO_BOCHS ||
+      Private->Variant == QEMU_VIDEO_BOCHS_MMIO ||
+      Private->Variant == QEMU_VIDEO_BOCHS_QXL ||
+      Private->Variant == QEMU_VIDEO_BOCHS_VMSVGA2) {
     UINT16 BochsId;
     BochsId = BochsRead(Private, VBE_DISPI_INDEX_ID);
     if ((BochsId & 0xFFF0) != VBE_DISPI_ID0) {
@@ -359,8 +372,10 @@ QemuVideoControllerDriverStart (
   case QEMU_VIDEO_CIRRUS_5446:
     Status = QemuVideoCirrusModeSetup (Private);
     break;
-  case QEMU_VIDEO_BOCHS_MMIO:
   case QEMU_VIDEO_BOCHS:
+  case QEMU_VIDEO_BOCHS_MMIO:
+  case QEMU_VIDEO_BOCHS_QXL:
+  case QEMU_VIDEO_BOCHS_VMSVGA2:
     Status = QemuVideoBochsModeSetup (Private, IsQxl);
     break;
   default:
@@ -406,8 +421,10 @@ QemuVideoControllerDriverStart (
   }
 
 #if defined MDE_CPU_IA32 || defined MDE_CPU_X64
-  if (Private->Variant == QEMU_VIDEO_BOCHS_MMIO ||
-      Private->Variant == QEMU_VIDEO_BOCHS) {
+  if (Private->Variant == QEMU_VIDEO_BOCHS ||
+      Private->Variant == QEMU_VIDEO_BOCHS_MMIO ||
+      Private->Variant == QEMU_VIDEO_BOCHS_QXL ||
+      Private->Variant == QEMU_VIDEO_BOCHS_VMSVGA2) {
     InstallVbeShim (Card->Name, Private->GraphicsOutput.Mode->FrameBufferBase);
   }
 #endif

@@ -62,7 +62,8 @@ QemuVideoCompleteModeData (
 
   Private->PciIo->GetBarAttributes (
                         Private->PciIo,
-                        0,
+                        Private->Variant == QEMU_VIDEO_BOCHS_VMSVGA2 ?
+                        PCI_BAR_IDX1 : PCI_BAR_IDX0,
                         NULL,
                         (VOID**) &FrameBufDesc
                         );
@@ -182,8 +183,10 @@ Routine Description:
   case QEMU_VIDEO_CIRRUS_5446:
     InitializeCirrusGraphicsMode (Private, &QemuVideoCirrusModes[ModeData->InternalModeIndex]);
     break;
-  case QEMU_VIDEO_BOCHS_MMIO:
   case QEMU_VIDEO_BOCHS:
+  case QEMU_VIDEO_BOCHS_MMIO:
+  case QEMU_VIDEO_BOCHS_QXL:
+  case QEMU_VIDEO_BOCHS_VMSVGA2:
     InitializeBochsGraphicsMode (Private, &QemuVideoBochsModes[ModeData->InternalModeIndex]);
     break;
   default:
